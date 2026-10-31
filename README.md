@@ -1,70 +1,71 @@
-# sitecopy — online panel
+# sitecopy
 
-`site_kopyala.rb` aracının web arayüzü (`kopya_sunucu.rb`). Tarayıcıdan bir URL
-yapıştırırsın, site arka planda kopyalanır, ilerleme canlı akar ve bitince kopya
-`/site/<kim>/` adresinde açılır.
+Bir siteyi kopyalayıp kendi tarayıcında gezilebilir hale getiren aracın **online
+paneli**. Sunucu yok, kurulum yok: panel GitHub Pages'te durur, kopyalama işini
+deponun GitHub Actions'ı yapar, çıktı yine aynı adreste yayınlanır.
 
-Bu depo, paneli yerel makineden çıkarıp bir sunucuda (Docker) çalışacak hale
-getirilmiş sürümüdür.
+## Nasıl çalışır
 
-## Tek tıkla canlıya al
+```
+GitHub Pages (docs/)          GitHub Actions              GitHub Pages
+┌──────────────────┐  tetikle  ┌──────────────────┐  commit  ┌──────────────────┐
+│  panel (tarayıcı)│ ────────► │ site_kopyala.rb  │ ───────► │ kopyalar/<kim>/  │
+└──────────────────┘           └──────────────────┘          └──────────────────┘
+```
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/canxvar/sitecopy)
+1. Panelde adresi yazıp **Kopyala**'ya basarsın.
+2. Panel, `kopyala` iş akışını `workflow_dispatch` ile tetikler.
+3. Action `site_kopyala.rb`'yi çalıştırır, `pages_hazirla.rb` yolları Pages için
+   göreli hale getirir, sonucu `docs/kopyalar/<kim>/` altına commit eder.
+4. Pages yayına alır; panel `…/kopyalar/<kim>/` adresini gösterir.
 
-Render'da GitHub ile giriş yapıp **Apply** de; `KOPYA_SIFRE` otomatik üretilir.
-Panel `https://<servis-adı>.onrender.com` adresinde, kullanıcı adı `admin`.
+## Gereken tek şey
 
-## Yerelde çalıştırma
+Panelde bir kez **kişisel erişim jetonu** tanımlaman:
+<https://github.com/settings/tokens/new?scopes=repo,workflow&description=sitecopy>
+
+- `repo` + `workflow` yetkileri yeterli.
+- Jeton yalnızca tarayıcının `localStorage`'ında tutulur, hiçbir sunucuya gitmez.
+- Jetonsuz panel açılır, kopyalar listelenir ve gezilir; sadece yeni kopyalama ve
+  silme kapalı olur.
+
+## Pages ayarı
+
+Depo → Settings → Pages → **Source: Deploy from a branch** → Branch: `main`,
+klasör: **`/docs`**.
+
+`docs/.nojekyll` sayesinde `_dis/` gibi alt çizgiyle başlayan klasörler de yayınlanır.
+
+## Yerel çalıştırma (klasik Ruby paneli)
 
 ```bash
 bundle install
-ruby kopya_sunucu.rb          # http://localhost:8787
+ruby kopya_sunucu.rb      # http://localhost:8787
 ```
 
-Kopyalama yapabilmek için `nokogiri` gerekir (`bundle install` bunu kurar).
-
-## Docker
+Sunucu modu (`KOPYA_MOD=sunucu`) için Docker:
 
 ```bash
 docker build -t sitecopy .
 docker run -p 8080:8080 -e KOPYA_KULLANICI=admin -e KOPYA_SIFRE=gizli sitecopy
 ```
 
-## Sunucu modu
+## Dosyalar
 
-`KOPYA_MOD=sunucu` (veya tanımlı bir `PORT` değişkeni) sunucu modunu açar:
+| Yol | İş |
+|---|---|
+| `docs/` | GitHub Pages paneli (statik) |
+| `docs/kopyalar/` | Üretilen kopyalar |
+| `.github/workflows/kopyala.yml` | Kopyalama iş akışı |
+| `.github/workflows/sil.yml` | Kopya silme iş akışı |
+| `site_kopyala.rb` | Crawler (Actions ve yerel panel aynı dosyayı kullanır) |
+| `pages_hazirla.rb` | Kök mutlak yolları Pages için göreli yapar |
+| `kopya_sunucu.rb` | Yerel/Docker web paneli |
 
-- `0.0.0.0` adresine bağlanır, `PORT` değişkenini kullanır.
-- Kopyalar ayrı portlarda değil, `/site/<kim>/` altında tek adresten servis edilir.
-- Kopyaların içindeki kök mutlak yollar (`/assets/x.css`) istek anında
-  `/site/<kim>/assets/x.css` olarak yeniden yazılır.
-- Chrome/Finder açma denemeleri yapılmaz.
+## Sınırlar
 
-## Ortam değişkenleri
-
-| Değişken | Varsayılan | Açıklama |
-|---|---|---|
-| `KOPYA_MOD` | — | `sunucu` ise sunucu modu açılır |
-| `PORT` | `8787` | Dinlenecek port (Render/Fly bunu kendisi verir) |
-| `KOPYA_PORT` | `PORT` | Alternatif port değişkeni |
-| `KOPYA_KOPYALAR` | `./kopyalar` | Kopyaların yazılacağı dizin |
-| `KOPYA_KULLANICI` / `KOPYA_SIFRE` | — | İkisi de doluysa panel HTTP Basic ile korunur |
-| `KOPYA_ACMA` | — | `0` ise açılışta tarayıcı açılmaz |
-
-## Render'a dağıtım
-
-Depo `render.yaml` içeriyor, yani "Blueprint" olarak tek tıkla kurulabilir:
-
-1. Render → **New → Blueprint** → bu GitHub deposunu seç.
-2. `KOPYA_SIFRE` otomatik üretilir; dashboard'daki **Environment** sekmesinden oku.
-3. Panel `https://<servis-adı>.onrender.com` adresinde, kullanıcı adı `admin`.
-
-## Sınırlar / uyarılar
-
-- Render ücretsiz planında disk **geçicidir**: servis yeniden başlayınca kopyalar
-  silinir. Kalıcılık için diskli (ücretli) plan veya S3 benzeri depo gerekir.
-- Ücretsiz örnek 15 dakika trafik almazsa uyur, ilk istekte ~30 sn'de açılır.
-- Panel herkese açık bir ayna servisi demektir: şifre korumasını açık tutun.
-  Kopyalanan sitelerin telif sorumluluğu kullanıcıya aittir.
-- Çok büyük siteler (GB mercii) ücretsiz örneğin diskini ve belleğini tüketir;
-  `derinlik` değerini küçük tutun.
+- GitHub Actions ücretsiz kotası: ayda 2.000 dakika. Büyük siteler bu kotayı yer.
+- Pages sitesi 1 GB'ı, tek dosya 100 MB'ı geçemez. Çok büyük kopyalar reddedilir.
+- Pages saatte 10 yayın derlemesi yapar; art arda çok kopyalarsan sıraya girer.
+- Depo herkese açıksa kopyalar da herkese açık olur. Telif sorumluluğu kullanıcıya aittir.
+- Kopyalanan sayfaların form/API çağrıları çalışmaz (orijinal sunucu yok).
