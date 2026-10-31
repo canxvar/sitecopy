@@ -13,21 +13,18 @@ GitHub Pages (docs/)          GitHub Actions              GitHub Pages
 └──────────────────┘           └──────────────────┘          └──────────────────┘
 ```
 
-1. Panelde adresi yazıp **Kopyala**'ya basarsın.
-2. Panel, `kopyala` iş akışını `workflow_dispatch` ile tetikler.
+1. Panelde adresi yazıp **GitHub'da başlat**'a basarsın. Adres panoya kopyalanır
+   ve deponun **kopyala** iş akışı sayfası açılır.
+2. Orada **Run workflow** → adresi yapıştır → **Run**.
 3. Action `site_kopyala.rb`'yi çalıştırır, `pages_hazirla.rb` yolları Pages için
    göreli hale getirir, sonucu `docs/kopyalar/<kim>/` altına commit eder.
-4. Pages yayına alır; panel `…/kopyalar/<kim>/` adresini gösterir.
+4. Pages yayına alır; kopya panelin listesinde `…/kopyalar/<kim>/` olarak görünür.
 
-## Gereken tek şey
+Panel hiçbir jeton, hesap veya kurulum istemez: yalnızca herkese açık GitHub
+API'sinden kopyaları ve son işleri okur.
 
-Panelde bir kez **kişisel erişim jetonu** tanımlaman:
-<https://github.com/settings/tokens/new?scopes=repo,workflow&description=sitecopy>
-
-- `repo` + `workflow` yetkileri yeterli.
-- Jeton yalnızca tarayıcının `localStorage`'ında tutulur, hiçbir sunucuya gitmez.
-- Jetonsuz panel açılır, kopyalar listelenir ve gezilir; sadece yeni kopyalama ve
-  silme kapalı olur.
+Kopya silmek için `sil` iş akışını **Run workflow** ile çalıştırıp kopya kimliğini
+girmen yeterli.
 
 ## Pages ayarı
 

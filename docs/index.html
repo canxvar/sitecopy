@@ -23,84 +23,36 @@
   .tema:hover { background:var(--yazi); color:var(--bg); }
   .sayac { font-size:13px; opacity:.55; }
 
-  hr { border:0; border-top:1px solid var(--cizgi); margin:36px 0 10px; }
-
   form { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:34px; }
   input#url { flex:1 1 240px; padding:10px 2px; font-size:16px; color:var(--yazi);
               background:none; border:0; border-bottom:1px solid var(--cizgi); outline:none; }
   input#url::placeholder { color:inherit; opacity:.35; }
-  select { padding:10px 2px; font-size:14px; color:var(--yazi); background:none;
-           border:0; border-bottom:1px solid var(--cizgi); outline:none; cursor:pointer; }
-  option { color:#000; background:#fff; }
   button.ana { padding:11px 22px; font-size:15px; font-weight:600; color:var(--dugmeYazi);
                background:var(--dugmeArka); border:1px solid var(--dugmeArka); cursor:pointer; }
-  button.ana:hover:not(:disabled) { opacity:.8; }
-  button.ana:disabled { opacity:.35; cursor:wait; }
+  button.ana:hover { opacity:.8; }
 
-  /* anahtar / jeton */
-  .jetonSatir { display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-                margin-top:18px; font-size:13px; opacity:.75; }
-  .jetonSatir .nokta2 { width:7px; height:7px; background:currentColor; display:inline-block; }
-  .jetonSatir .kapali { opacity:.6; }
-  #jetonKart { margin-top:14px; display:none; padding:16px 0; border-top:1px solid var(--cizgi);
-               border-bottom:1px solid var(--cizgi); }
-  #jetonKart p { margin:0 0 10px; font-size:13px; opacity:.75; }
-  #jetonKart input { width:100%; padding:8px 2px; font-size:14px; color:var(--yazi);
-                     background:none; border:0; border-bottom:1px solid var(--cizgi); outline:none;
-                     font-family:ui-monospace,Menlo,monospace; }
-  #jetonKart .satir { display:flex; gap:10px; margin-top:12px; }
-  #jetonKart a { color:inherit; }
+  .ipucu { margin-top:14px; font-size:13px; opacity:.55; line-height:1.7; }
+  .ipucu b { opacity:.9; }
 
-  /* durum */
-  #durumKarti { margin-top:34px; display:none; }
-  #durumKarti p { margin:0; }
-  .rozet { display:inline-block; font-size:14px; font-weight:600; }
-  .rozet .nokta { display:inline-block; width:8px; height:8px; background:currentColor;
-                  margin-right:7px; vertical-align:1px; }
-  .rozet.calisiyor .nokta { animation:yanip 1s steps(2, start) infinite; }
-  .rozet.bitti .nokta, .rozet.hata .nokta { opacity:.3; }
-  @keyframes yanip { 50% { opacity:0; } }
-  #kisaBilgi { font-size:13px; opacity:.55; margin-left:10px; }
-
-  .ilerleme { height:1px; background:var(--cizgi); margin:16px 0 0; display:none; overflow:hidden; }
-  .ilerleme i { display:block; height:100%; width:40%; background:var(--yazi);
-                animation:kayma 1.1s linear infinite; }
-  @keyframes kayma { from { margin-left:-40%; } to { margin-left:100%; } }
-
-  #konsol { margin-top:16px; max-height:240px; overflow-y:auto; display:none;
-            font:12px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace;
-            white-space:pre-wrap; word-break:break-all; }
-  #konsol .ok { font-weight:700; }
-  #konsol .hata { font-weight:700; }
-  #konsol .sol { opacity:.55; }
-  #konsol a { color:inherit; }
-
-  /* basari */
-  #basari { margin-top:34px; display:none; }
-  #basari .bas { font-size:16px; font-weight:700; }
-  #basariBilgi { font-size:13px; opacity:.55; }
-  #basari .adres { display:block; margin:12px 0 16px; font-size:14px; color:inherit;
-                   word-break:break-all; text-decoration:underline; }
-  button.sol { padding:11px 20px; font-size:15px; color:var(--yazi); background:none;
-               border:1px solid var(--cizgi); cursor:pointer; margin-left:8px; }
-  button.sol:hover { background:var(--yazi); color:var(--bg); }
-
-  /* liste */
   .yon { display:flex; align-items:baseline; justify-content:space-between; gap:10px;
          margin:38px 0 0; }
   .yon b { font-size:16px; }
   .yon .sayac { margin-left:8px; }
   .yon button { padding:0; font-size:13px; color:inherit; background:none; border:0;
                 text-decoration:underline; cursor:pointer; }
-  #liste { border-top:1px solid var(--cizgi); margin-top:10px; }
-  .kopya { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+  .liste { border-top:1px solid var(--cizgi); margin-top:10px; }
+  .satir { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
            padding:12px 0; border-bottom:1px solid var(--cizgi); }
-  .kopya .alan { font-weight:600; }
-  .kopya .meta { flex:1 1 140px; font-size:13px; opacity:.55; }
-  .kopya .eylem { display:flex; gap:14px; font-size:13px; }
+  .satir .ad { font-weight:600; }
+  .satir .meta { flex:1 1 140px; font-size:13px; opacity:.55; }
+  .satir .eylem { display:flex; gap:14px; font-size:13px; }
   .link { padding:0; font:inherit; font-size:13px; color:inherit; background:none;
           border:0; text-decoration:underline; cursor:pointer; }
   .bos { padding:22px 0; font-size:14px; opacity:.55; }
+  .nokta { display:inline-block; width:7px; height:7px; background:currentColor;
+           margin-right:6px; vertical-align:1px; }
+  .nokta.calisiyor { animation:yanip 1s steps(2, start) infinite; }
+  @keyframes yanip { 50% { opacity:0; } }
 
   .dipnot { margin:auto 0 0; padding-top:40px; font-size:12px; opacity:.45; line-height:1.7; }
   .dipnot a { color:inherit; }
@@ -125,61 +77,32 @@
 
     <form id="form">
       <input id="url" type="text" placeholder="https://ornek.com" autocomplete="off" spellcheck="false" required>
-      <select id="sayfa" title="Kaç sayfa kopyalanacak">
-        <option value="10">10 sayfa</option>
-        <option value="25" selected>25 sayfa</option>
-        <option value="50">50 sayfa</option>
-        <option value="100">100 sayfa</option>
-      </select>
-      <button class="ana" id="dugme" type="submit">Kopyala</button>
+      <button class="ana" id="dugme" type="submit">GitHub'da başlat</button>
     </form>
 
-    <div class="jetonSatir">
-      <span class="nokta2" id="jetonNokta"></span>
-      <span id="jetonDurum">GitHub jetonu yok — kopyalama kapalı</span>
-      <button class="link" id="jetonBtn" type="button">jeton ekle</button>
-    </div>
-
-    <div id="jetonKart">
-      <p>
-        Kopyalama işini bu deponun GitHub Actions'ı yapar; panel yalnızca işi tetikler.
-        Bunun için <b>repo + workflow</b> yetkili bir kişisel erişim jetonu gerekiyor.
-        Jeton yalnızca bu tarayıcıda (<code>localStorage</code>) tutulur, hiçbir yere gönderilmez.
-        <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=sitecopy" target="_blank" rel="noopener">Jeton oluştur →</a>
-      </p>
-      <input id="jetonGirdi" type="password" placeholder="ghp_..." autocomplete="off" spellcheck="false">
-      <div class="satir">
-        <button class="ana" id="jetonKaydet" type="button">Kaydet</button>
-        <button class="sol" id="jetonSil" type="button">Kaldır</button>
-      </div>
-    </div>
-
-    <div id="durumKarti">
-      <p><span class="rozet" id="rozet"><span class="nokta"></span><span id="rozetMetin">Bekliyor</span></span><span id="kisaBilgi"></span></p>
-      <div class="ilerleme" id="ilerleme"><i></i></div>
-      <div id="konsol"></div>
-    </div>
-
-    <div id="basari">
-      <div class="bas">Kopya hazır</div>
-      <div id="basariBilgi"></div>
-      <a class="adres" id="basariAdres" href="#" target="_blank" rel="noopener"></a>
-      <button class="ana" id="btnAc" type="button">Aç</button>
-      <button class="sol" id="btnKlasor" type="button">GitHub'da gör</button>
-    </div>
+    <p class="ipucu">
+      Adresi yazıp butona bas: adres panoya kopyalanır ve GitHub Actions sayfası açılır.
+      Orada <b>kopyala</b> iş akışında <b>Run workflow</b> → adresi yapıştır → <b>Run</b>.
+      Kopya bitince aşağıdaki listede görünür.
+    </p>
 
     <div class="yon">
       <b>Kopyalar <span class="sayac" id="listeSayac"></span></b>
       <button id="btnYenile" type="button">yenile</button>
     </div>
-    <div id="liste"><div class="bos">Yükleniyor…</div></div>
+    <div class="liste" id="liste"><div class="bos">Yükleniyor…</div></div>
+
+    <div class="yon">
+      <b>Son işler</b>
+      <a class="link" href="https://github.com/canxvar/sitecopy/actions" target="_blank" rel="noopener">tümü</a>
+    </div>
+    <div class="liste" id="isler"><div class="bos">Yükleniyor…</div></div>
 
     <p class="dipnot">
       Panel <a href="https://github.com/canxvar/sitecopy" target="_blank" rel="noopener">canxvar/sitecopy</a>
       deposunun GitHub Pages yayınıdır. Kopyalama işi GitHub Actions'ta çalışır, çıktı depoya
       işlenir ve aynı adreste yayınlanır. Kopyalanan sitelerin telif sorumluluğu kullanıcıya aittir.
     </p>
-
     <p class="imza">dev./canxvar</p>
   </div>
 
