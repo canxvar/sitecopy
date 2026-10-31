@@ -7,6 +7,13 @@ yapıştırırsın, site arka planda kopyalanır, ilerleme canlı akar ve bitinc
 Bu depo, paneli yerel makineden çıkarıp bir sunucuda (Docker) çalışacak hale
 getirilmiş sürümüdür.
 
+## Tek tıkla canlıya al
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/canxvar/sitecopy)
+
+Render'da GitHub ile giriş yapıp **Apply** de; `KOPYA_SIFRE` otomatik üretilir.
+Panel `https://<servis-adı>.onrender.com` adresinde, kullanıcı adı `admin`.
+
 ## Yerelde çalıştırma
 
 ```bash
