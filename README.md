@@ -26,6 +26,12 @@ API'sinden kopyaları ve son işleri okur.
 Kopya silmek için `sil` iş akışını **Run workflow** ile çalıştırıp kopya kimliğini
 girmen yeterli.
 
+## Kurulum (tek seferlik)
+
+Panel jetonsuz olduğu için iki iş akışı dosyasını GitHub web arayüzünden bir kez
+eklemen gerekiyor — içerikler [`kurulum/`](kurulum/) klasöründe hazır:
+<https://github.com/canxvar/sitecopy/tree/main/kurulum>
+
 ## Pages ayarı
 
 Depo → Settings → Pages → **Source: Deploy from a branch** → Branch: `main`,

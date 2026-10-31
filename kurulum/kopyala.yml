@@ -1,0 +1,64 @@
+name: kopyala
+
+run-name: "kopya — ${{ inputs.url }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Kopyalanacak adres (https://...)"
+        required: true
+      sayfa:
+        description: "En fazla sayfa sayısı"
+        required: false
+        default: "40"
+      derinlik:
+        description: "Bağlantı derinliği"
+        required: false
+        default: "6"
+
+permissions:
+  contents: write
+
+jobs:
+  kopyala:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Kopyala ve yayına hazırla
+        env:
+          HEDEF: ${{ inputs.url }}
+          SAYFA: ${{ inputs.sayfa }}
+          DERINLIK: ${{ inputs.derinlik }}
+        run: |
+          set -e
+          KIM="$(date -u +%Y%m%d-%H%M%S)-$(printf '%04x' $RANDOM)"
+          export KIM
+          echo "kopya kimliği: $KIM"
+
+          ruby site_kopyala.rb "$HEDEF" \
+            -o "docs/kopyalar/$KIM" \
+            -d "$DERINLIK" \
+            -s "$SAYFA" \
+            --varlik 4000
+
+          ruby pages_hazirla.rb "docs/kopyalar/$KIM"
+
+          ruby -rjson -e 'File.write(File.join("docs/kopyalar", ENV["KIM"], ".kopya.json"), JSON.generate({ url: ENV["HEDEF"], kim: ENV["KIM"] }))'
+
+          git config user.name "sitecopy-bot"
+          git config user.email "sitecopy-bot@users.noreply.github.com"
+          git add -A "docs/kopyalar/$KIM"
+          if git diff --cached --quiet; then
+            echo "değişiklik yok"
+          else
+            git commit -m "kopya: $HEDEF ($KIM)"
+            git push
+          fi
