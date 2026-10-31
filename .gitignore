@@ -1,0 +1,4 @@
+kopyalar/
+vendor/bundle/
+.DS_Store
+*.log
