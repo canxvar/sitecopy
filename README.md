@@ -36,18 +36,12 @@ klasör: **`/docs`**.
 
 `docs/.nojekyll` sayesinde `_dis/` gibi alt çizgiyle başlayan klasörler de yayınlanır.
 
-## Yerel çalıştırma (klasik Ruby paneli)
+## Yerel kullanım (crawler'ı doğrudan çalıştırma)
 
 ```bash
 bundle install
-ruby kopya_sunucu.rb      # http://localhost:8787
-```
-
-Sunucu modu (`KOPYA_MOD=sunucu`) için Docker:
-
-```bash
-docker build -t sitecopy .
-docker run -p 8080:8080 -e KOPYA_KULLANICI=admin -e KOPYA_SIFRE=gizli sitecopy
+ruby site_kopyala.rb https://ornek.com -o cikti -d 4 -s 40
+ruby pages_hazirla.rb cikti      # yolları göreli hale getirir
 ```
 
 ## Dosyalar
@@ -58,9 +52,9 @@ docker run -p 8080:8080 -e KOPYA_KULLANICI=admin -e KOPYA_SIFRE=gizli sitecopy
 | `docs/kopyalar/` | Üretilen kopyalar |
 | `.github/workflows/kopyala.yml` | Kopyalama iş akışı |
 | `.github/workflows/sil.yml` | Kopya silme iş akışı |
-| `site_kopyala.rb` | Crawler (Actions ve yerel panel aynı dosyayı kullanır) |
+| `site_kopyala.rb` | Crawler (Actions aynı dosyayı çalıştırır) |
 | `pages_hazirla.rb` | Kök mutlak yolları Pages için göreli yapar |
-| `kopya_sunucu.rb` | Yerel/Docker web paneli |
+| `Gemfile` | Actions'ta kurulan bağımlılıklar (`nokogiri`) |
 
 ## Sınırlar
 
