@@ -1,68 +1,62 @@
 # sitecopy
 
-Bir siteyi kopyalayıp kendi tarayıcında gezilebilir hale getiren aracın **online
-paneli**. Sunucu yok, kurulum yok: panel GitHub Pages'te durur, kopyalama işini
-deponun GitHub Actions'ı yapar, çıktı yine aynı adreste yayınlanır.
+Bir web sitesini (sayfaları, stilleri, resimleri) indirip kendi bilgisayarında
+gezilebilir hale getiren panel. Tamamı **tarayıcıda** çalışır: sunucu, hesap,
+jeton, kurulum yok.
+
+**Canlı panel:** <https://canxvar.github.io/sitecopy/>
 
 ## Nasıl çalışır
 
-```
-GitHub Pages (docs/)          GitHub Actions              GitHub Pages
-┌──────────────────┐  tetikle  ┌──────────────────┐  commit  ┌──────────────────┐
-│  panel (tarayıcı)│ ────────► │ site_kopyala.rb  │ ───────► │ kopyalar/<kim>/  │
-└──────────────────┘           └──────────────────┘          └──────────────────┘
-```
+1. Adresi yaz, kaç sayfa kopyalanacağını seç, **Kopyala**'ya bas.
+2. Panel sayfaları ve dosyaları indirir, bağlantıları göreli yollara çevirir.
+3. Bitince `<alanadı>-sitecopy.zip` bilgisayarına iner.
+4. ZIP'i aç, `index.html` dosyasına çift tıkla — site çevrimdışı açılır.
 
-1. Panelde adresi yazıp **GitHub'da başlat**'a basarsın. Adres panoya kopyalanır
-   ve deponun **kopyala** iş akışı sayfası açılır.
-2. Orada **Run workflow** → adresi yapıştır → **Run**.
-3. Action `site_kopyala.rb`'yi çalıştırır, `pages_hazirla.rb` yolları Pages için
-   göreli hale getirir, sonucu `docs/kopyalar/<kim>/` altına commit eder.
-4. Pages yayına alır; kopya panelin listesinde `…/kopyalar/<kim>/` olarak görünür.
+Site kopyaları hiçbir yere yüklenmez; her şey senin tarayıcında oluşur.
 
-Panel hiçbir jeton, hesap veya kurulum istemez: yalnızca herkese açık GitHub
-API'sinden kopyaları ve son işleri okur.
+## Nasıl oluyor da tarayıcı başka siteleri okuyabiliyor
 
-Kopya silmek için `sil` iş akışını **Run workflow** ile çalıştırıp kopya kimliğini
-girmen yeterli.
+Normalde tarayıcı, başka bir alan adındaki dosyaları CORS yüzünden okuyamaz.
+Panel bu yüzden okuma işini iki genel köprü üzerinden yapar:
 
-## Kurulum (tek seferlik)
+| İçerik | Köprü |
+|---|---|
+| HTML, CSS, JS | `r.jina.ai` |
+| Resimler (png/jpg/webp/gif/ico…) | `wsrv.nl` |
 
-Panel jetonsuz olduğu için iki iş akışı dosyasını GitHub web arayüzünden bir kez
-eklemen gerekiyor — içerikler [`kurulum/`](kurulum/) klasöründe hazır:
-<https://github.com/canxvar/sitecopy/tree/main/kurulum>
+Sayfa adresleri, bağlantılar ve `url()` çağrıları kopya içinde yerelleştirilir;
+indirilemeyen bir şey kalırsa tam adres olarak bırakılır.
 
-## Pages ayarı
+## Kopyada ne olur, ne olmaz
 
-Depo → Settings → Pages → **Source: Deploy from a branch** → Branch: `main`,
-klasör: **`/docs`**.
+- ✅ Sayfalar, stiller, resimler, menüler, statik içerik.
+- ⚠️ Yazı tipleri (woff) indirilemez; sistem yazı tipine düşer.
+- ⚠️ Site betikleri (JS) varsayılan olarak **çıkarılır**. Sebep: SPA siteler
+  açılışta sayfayı kendi API'sinden yeniden kurar, çevrimdışı kopya boş kalır.
+  İstersen **JS'i koru** kutusunu işaretleyebilirsin.
+- ❌ Formlar, giriş, sepet, canlı arama gibi sunucu gerektiren şeyler çalışmaz.
 
-`docs/.nojekyll` sayesinde `_dis/` gibi alt çizgiyle başlayan klasörler de yayınlanır.
+## Sınırlar
 
-## Yerel kullanım (crawler'ı doğrudan çalıştırma)
+- Sayfa başına ücretsiz köprülerin hız sınırı var; çok büyük siteler yavaşlar.
+- Video, PDF, arşiv gibi ağır dosyalar kopyaya alınmaz.
+- Kopyalanan sitelerin telif sorumluluğu kullanıcıya aittir.
+
+## Yerel CLI (isteğe bağlı)
+
+Panelin kullandığı motoru komut satırından da çalıştırabilirsin:
 
 ```bash
 bundle install
 ruby site_kopyala.rb https://ornek.com -o cikti -d 4 -s 40
-ruby pages_hazirla.rb cikti      # yolları göreli hale getirir
 ```
 
 ## Dosyalar
 
 | Yol | İş |
 |---|---|
-| `docs/` | GitHub Pages paneli (statik) |
-| `docs/kopyalar/` | Üretilen kopyalar |
-| `.github/workflows/kopyala.yml` | Kopyalama iş akışı |
-| `.github/workflows/sil.yml` | Kopya silme iş akışı |
-| `site_kopyala.rb` | Crawler (Actions aynı dosyayı çalıştırır) |
-| `pages_hazirla.rb` | Kök mutlak yolları Pages için göreli yapar |
-| `Gemfile` | Actions'ta kurulan bağımlılıklar (`nokogiri`) |
-
-## Sınırlar
-
-- GitHub Actions ücretsiz kotası: ayda 2.000 dakika. Büyük siteler bu kotayı yer.
-- Pages sitesi 1 GB'ı, tek dosya 100 MB'ı geçemez. Çok büyük kopyalar reddedilir.
-- Pages saatte 10 yayın derlemesi yapar; art arda çok kopyalarsan sıraya girer.
-- Depo herkese açıksa kopyalar da herkese açık olur. Telif sorumluluğu kullanıcıya aittir.
-- Kopyalanan sayfaların form/API çağrıları çalışmaz (orijinal sunucu yok).
+| `docs/index.html` | panel arayüzü |
+| `docs/app.js` | tarayıcıdaki kopyalayıcı (indirme, yeniden yazma, ZIP) |
+| `site_kopyala.rb` | aynı işi yapan Ruby CLI |
+| `Gemfile` | CLI bağımlılıkları (`nokogiri`) |

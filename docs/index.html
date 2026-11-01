@@ -27,35 +27,48 @@
   input#url { flex:1 1 240px; padding:10px 2px; font-size:16px; color:var(--yazi);
               background:none; border:0; border-bottom:1px solid var(--cizgi); outline:none; }
   input#url::placeholder { color:inherit; opacity:.35; }
+  select { padding:10px 2px; font-size:14px; color:var(--yazi); background:none;
+           border:0; border-bottom:1px solid var(--cizgi); outline:none; cursor:pointer; }
+  option { color:#000; background:#fff; }
   button.ana { padding:11px 22px; font-size:15px; font-weight:600; color:var(--dugmeYazi);
                background:var(--dugmeArka); border:1px solid var(--dugmeArka); cursor:pointer; }
-  button.ana:hover { opacity:.8; }
+  button.ana:hover:not(:disabled) { opacity:.8; }
+  button.ana:disabled { opacity:.35; cursor:wait; }
+  .anahtar { display:flex; align-items:center; gap:7px; font-size:13px; opacity:.6; cursor:pointer; }
+  .anahtar input { width:14px; height:14px; accent-color:var(--yazi); }
+  button.sol { padding:11px 20px; font-size:15px; color:var(--yazi); background:none;
+               border:1px solid var(--cizgi); cursor:pointer; margin-left:8px; }
+  button.sol:hover { background:var(--yazi); color:var(--bg); }
 
-  .ipucu { margin-top:14px; font-size:13px; opacity:.55; line-height:1.7; }
-  .ipucu b { opacity:.9; }
+  .ipucu { margin:14px 0 0; font-size:13px; opacity:.55; line-height:1.7; }
 
-  .yon { display:flex; align-items:baseline; justify-content:space-between; gap:10px;
-         margin:38px 0 0; }
-  .yon b { font-size:16px; }
-  .yon .sayac { margin-left:8px; }
-  .yon button { padding:0; font-size:13px; color:inherit; background:none; border:0;
-                text-decoration:underline; cursor:pointer; }
-  .liste { border-top:1px solid var(--cizgi); margin-top:10px; }
-  .satir { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
-           padding:12px 0; border-bottom:1px solid var(--cizgi); }
-  .satir .ad { font-weight:600; }
-  .satir .meta { flex:1 1 140px; font-size:13px; opacity:.55; }
-  .satir .eylem { display:flex; gap:14px; font-size:13px; }
-  .link { padding:0; font:inherit; font-size:13px; color:inherit; background:none;
-          border:0; text-decoration:underline; cursor:pointer; }
-  .bos { padding:22px 0; font-size:14px; opacity:.55; }
-  .nokta { display:inline-block; width:7px; height:7px; background:currentColor;
-           margin-right:6px; vertical-align:1px; }
-  .nokta.calisiyor { animation:yanip 1s steps(2, start) infinite; }
+  #durumKarti { margin-top:34px; display:none; }
+  #durumKarti p { margin:0; }
+  .rozet { display:inline-block; font-size:14px; font-weight:600; }
+  .rozet .nokta { display:inline-block; width:8px; height:8px; background:currentColor;
+                  margin-right:7px; vertical-align:1px; }
+  .rozet.calisiyor .nokta { animation:yanip 1s steps(2, start) infinite; }
+  .rozet.bitti .nokta, .rozet.hata .nokta { opacity:.3; }
   @keyframes yanip { 50% { opacity:0; } }
+  #kisaBilgi { font-size:13px; opacity:.55; margin-left:10px; }
+
+  .ilerleme { height:3px; background:rgba(128,128,128,.25); margin:16px 0 0; display:none; overflow:hidden; }
+  .ilerleme i { display:block; height:100%; width:0; background:var(--yazi); transition:width .3s; }
+
+  #konsol { margin-top:16px; max-height:200px; overflow-y:auto; display:none;
+            font:12px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace;
+            white-space:pre-wrap; word-break:break-all; }
+  #konsol .ok { font-weight:700; }
+  #konsol .hata { font-weight:700; }
+  #konsol .sol { opacity:.55; }
+
+  #basari { margin-top:34px; display:none; }
+  #basari .bas { font-size:16px; font-weight:700; }
+  #basariBilgi { font-size:13px; opacity:.55; }
+  #basari .adres { display:block; margin:12px 0 16px; font-size:14px; color:inherit;
+                   word-break:break-all; text-decoration:underline; }
 
   .dipnot { margin:auto 0 0; padding-top:40px; font-size:12px; opacity:.45; line-height:1.7; }
-  .dipnot a { color:inherit; }
   .imza { margin:2px 0 0; padding:0; font-size:12px; font-weight:600; line-height:1.7;
           letter-spacing:0; text-align:center; opacity:.45; }
 
@@ -77,31 +90,41 @@
 
     <form id="form">
       <input id="url" type="text" placeholder="https://ornek.com" autocomplete="off" spellcheck="false" required>
-      <button class="ana" id="dugme" type="submit">GitHub'da başlat</button>
+      <select id="sayfa" title="Kaç sayfa kopyalanacak">
+        <option value="5">5 sayfa</option>
+        <option value="10" selected>10 sayfa</option>
+        <option value="20">20 sayfa</option>
+        <option value="40">40 sayfa</option>
+      </select>
+      <button class="ana" id="dugme" type="submit">Kopyala</button>
+      <label class="anahtar" title="Kapatırsan site betikleri kopyaya eklenmez; sayfalar statik açılır">
+        <input type="checkbox" id="js">
+        JS'i koru
+      </label>
     </form>
 
     <p class="ipucu">
-      Adresi yazıp butona bas: adres panoya kopyalanır ve GitHub Actions sayfası açılır.
-      Orada <b>kopyala</b> iş akışında <b>Run workflow</b> → adresi yapıştır → <b>Run</b>.
-      Kopya bitince aşağıdaki listede görünür.
+      Adresi yaz, <b>Kopyala</b>'ya bas. Sayfalar senin bağlantın üzerinden indirilir,
+      hazır olunca ZIP bilgisayarına iner. Sunucu, hesap, kurulum yok.
     </p>
 
-    <div class="yon">
-      <b>Kopyalar <span class="sayac" id="listeSayac"></span></b>
-      <button id="btnYenile" type="button">yenile</button>
+    <div id="durumKarti">
+      <p><span class="rozet" id="rozet"><span class="nokta"></span><span id="rozetMetin">Bekliyor</span></span><span id="kisaBilgi"></span></p>
+      <div class="ilerleme" id="ilerleme"><i id="cubuk"></i></div>
+      <div id="konsol"></div>
     </div>
-    <div class="liste" id="liste"><div class="bos">Yükleniyor…</div></div>
 
-    <div class="yon">
-      <b>Son işler</b>
-      <a class="link" href="https://github.com/canxvar/sitecopy/actions" target="_blank" rel="noopener">tümü</a>
+    <div id="basari">
+      <div class="bas">Kopya hazır</div>
+      <div id="basariBilgi"></div>
+      <a class="adres" id="basariAdres" href="#" download></a>
+      <button class="ana" id="btnIndir" type="button">ZIP'i indir</button>
     </div>
-    <div class="liste" id="isler"><div class="bos">Yükleniyor…</div></div>
 
     <p class="dipnot">
-      Panel <a href="https://github.com/canxvar/sitecopy" target="_blank" rel="noopener">canxvar/sitecopy</a>
-      deposunun GitHub Pages yayınıdır. Kopyalama işi GitHub Actions'ta çalışır, çıktı depoya
-      işlenir ve aynı adreste yayınlanır. Kopyalanan sitelerin telif sorumluluğu kullanıcıya aittir.
+      Bu panel tarayıcında çalışır: kopyalanacak sayfalar senin bağlantın üzerinden indirilir,
+      hiçbir sunucuya yüklenmez ve depolanmaz. ZIP'i açıp <b>index.html</b>'e çift tıklayarak
+      siteyi çevrimdışı gezebilirsin. Kopyalanan sitelerin telif sorumluluğu kullanıcıya aittir.
     </p>
     <p class="imza">dev./canxvar</p>
   </div>
